@@ -23,12 +23,38 @@ def plot_mesh(mesh, export_folder = ""):
     ax1.grid(True)
 
     if export_folder != "":
-        current_directory_path = os.getcwd()
-        subfolder_path = os.path.join(current_directory_path, export_folder)
-        if not os.path.exists(subfolder_path):
-            os.makedirs(subfolder_path)
+        if not os.path.exists(export_folder):
+            os.makedirs(export_folder)
         file_name = 'Mesh.png'
-        file_path = os.path.join(subfolder_path, file_name)
+        file_path = os.path.join(export_folder, file_name)
+        plt.savefig(file_path)
+        plt.show()
+        plt.close(fig)
+        
+def plot_solution(mesh, solution_cell0Ds, title = "Solution", export_folder = ""):
+    coordinates = mesh.cell0_ds_coordinates()
+    x = coordinates[0,:]
+    y = coordinates[1,:]
+    z = solution_cell0Ds
+    triang = matplotlib.tri.Triangulation(x, y)
+    
+    fig = plt.figure(figsize = plt.figaspect(0.5))
+    fig.suptitle(title)
+    
+    ax1 = fig.add_subplot(1, 2, 1)
+    ax1.set_aspect('equal')
+    tpc = ax1.tripcolor(triang, z, shading='flat')
+    ax1.triplot(matplotlib.tri.Triangulation(coordinates[0, :], coordinates[1, :]), 'k--', lw=1)
+    fig.colorbar(tpc)
+    
+    ax2 = fig.add_subplot(1, 2, 2, projection='3d')
+    ax2.plot_trisurf(x, y, z, triangles=triang.triangles, cmap=plt.cm.Spectral)
+    
+    if export_folder != "": 
+        if not os.path.exists(export_folder):
+            os.makedirs(export_folder)
+        file_name = title + '.png'
+        file_path = os.path.join(export_folder, file_name)
         plt.savefig(file_path)
         plt.show()
         plt.close(fig)
