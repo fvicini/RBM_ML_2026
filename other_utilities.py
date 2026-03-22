@@ -30,6 +30,9 @@ def plot_mesh(mesh, export_folder = ""):
         plt.savefig(file_path)
         plt.show()
         plt.close(fig)
+    else:
+        plt.pause(0.1)
+        plt.close(fig)
         
 def plot_solution(mesh, solution_cell0Ds, title = "Solution", export_folder = ""):
     coordinates = mesh.cell0_ds_coordinates()
@@ -57,4 +60,7 @@ def plot_solution(mesh, solution_cell0Ds, title = "Solution", export_folder = ""
         file_path = os.path.join(export_folder, file_name)
         plt.savefig(file_path)
         plt.show()
+        plt.close(fig)
+    else:
+        plt.pause(0.1)
         plt.close(fig)
