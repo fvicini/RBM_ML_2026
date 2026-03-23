@@ -3,14 +3,24 @@ import scipy.sparse
 import matplotlib.pyplot as plt
 import matplotlib.tri
 
-def make_np_sparse(A_sparse_data):	
-	return make_np_sparse_shift(A_sparse_data, 0, 0)
-
-def make_np_sparse_shift(A_sparse_data, shiftRows, shiftCols):	
-	return scipy.sparse.csc_array((A_sparse_data.values, 
-                                   ([i + shiftRows for i in A_sparse_data.rows],
-                                    [i + shiftCols for i in A_sparse_data.cols])), 
-                                  shape=(A_sparse_data.size[0], A_sparse_data.size[1]))
+def make_np_sparse(A_sparse_data, new_size = None, shifts = None, transpose = None):
+    if new_size is None:
+        new_size = [A_sparse_data.size[0], A_sparse_data.size[1]]
+    if shifts is None:
+        shifts = [0, 0]
+    if transpose is None:
+        transpose = False
+    if transpose:
+        return scipy.sparse.csc_array((A_sparse_data.values, 
+                                       ([i + shifts[1] for i in A_sparse_data.cols],
+                                        [i + shifts[0] for i in A_sparse_data.rows])), 
+                                      shape=(new_size[0], new_size[1]))
+    else:
+        return scipy.sparse.csc_array((A_sparse_data.values, 
+                                       ([i + shifts[0] for i in A_sparse_data.rows],
+                                        [i + shifts[1] for i in A_sparse_data.cols])), 
+                                      shape=(new_size[0], new_size[1]))
+    
                                   
 def plot_mesh(mesh, export_folder = ""):
     fig = plt.figure(figsize=plt.figaspect(0.5))
@@ -34,7 +44,12 @@ def plot_mesh(mesh, export_folder = ""):
         plt.pause(0.1)
         plt.close(fig)
         
-def plot_solution(mesh, solution_cell0Ds, title = "Solution", export_folder = ""):
+def plot_solution(mesh, solution_cell0Ds, title = None, export_folder = None):
+    if title is None:
+        title = "Solution"
+    if export_folder is None:
+        export_folder = ""
+    
     coordinates = mesh.cell0_ds_coordinates()
     x = coordinates[0,:]
     y = coordinates[1,:]
