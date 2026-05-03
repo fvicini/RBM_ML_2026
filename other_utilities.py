@@ -43,17 +43,27 @@ def plot_mesh(mesh, export_folder = ""):
     else:
         plt.pause(0.1)
         plt.close(fig)
-        
+
+def evaluate_function_on_points(points, function_name):
+    num_points = points.shape[1]
+    function_values = np.zeros(num_points)
+
+    for p in range(1, num_points):        
+      function_values[p] = function_name(points[0, p], points[1, p], points[2, p])
+    return function_values
+
 def plot_solution(mesh, solution_cell0Ds, title = None, export_folder = None):
+    plot_solution_on_coordinates(mesh.cell0_ds_coordinates(), solution_cell0Ds, title, export_folder)
+
+def plot_solution_on_coordinates(coordinates, solution_on_coordinates, title = None, export_folder = None):
     if title is None:
         title = "Solution"
     if export_folder is None:
         export_folder = ""
     
-    coordinates = mesh.cell0_ds_coordinates()
     x = coordinates[0,:]
     y = coordinates[1,:]
-    z = solution_cell0Ds
+    z = solution_on_coordinates
     triang = matplotlib.tri.Triangulation(x, y)
     
     fig = plt.figure(figsize = plt.figaspect(0.5))
